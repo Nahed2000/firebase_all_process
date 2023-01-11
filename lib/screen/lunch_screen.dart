@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_all_process/firebase/controller/fb_auth_acontroller.dart';
 import 'package:flutter/material.dart';
 
 class LunchScreen extends StatefulWidget {
@@ -8,13 +11,26 @@ class LunchScreen extends StatefulWidget {
 }
 
 class _LunchScreenState extends State<LunchScreen> {
+  late StreamSubscription streamSubscription;
+
   @override
   void initState() {
     // TODO: implement initState
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, 'loginScreen');
+      streamSubscription =
+          FbAuthController().checkUserStatus(({required bool loggedIn}) {
+        String rout = loggedIn ? 'notesScreen' : 'loginScreen';
+        Navigator.pushReplacementNamed(context, rout);
+      });
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    streamSubscription.cancel();
+    super.dispose();
   }
 
   @override

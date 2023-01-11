@@ -1,8 +1,21 @@
+import 'dart:async';
+
 import 'package:firebase_all_process/model/fb_response.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+typedef UsersStatusCallBack = void Function({required bool loggedIn});
+
 class FbAuthController {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  // This way not use
+  bool get loggedIn => _firebaseAuth.currentUser != null;
+
+  StreamSubscription checkUserStatus(UsersStatusCallBack usersStatusCallBack) {
+    return _firebaseAuth.authStateChanges().listen((User? user) {
+      usersStatusCallBack(loggedIn: user != null);
+    });
+  }
 
   //signIn
   Future<FbResponse> signInAccount(
